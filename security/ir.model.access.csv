@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_educational_contract,access_educational_contract,model_educational_contract,,1,1,1,1
+access_educational_contract_line,access_educational_contract_line,model_educational_contract_line,,1,1,1,1
+access_educational_subject,access_educational_subject,model_educational_subject,,1,1,1,1

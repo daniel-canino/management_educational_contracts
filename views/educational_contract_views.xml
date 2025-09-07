@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Form View -->
+    <record id="educational_contract_view_form" model="ir.ui.view">
+        <field name="name">educational.contract.view.form</field>
+        <field name="model">educational.contract</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name" />
+                        <field name="student_id" />
+                        <field name="payment_status" />
+                    </group>
+                    <notebook>
+                        <page name="subjects" string="Materias">
+                            <field name="contract_line_ids">
+                                <tree editable="bottom">
+                                    <field name="subject_id" />
+                                    <field name="professor_id" />
+                                    <field name="cost" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="educational_contract_view_tree" model="ir.ui.view">
+        <field name="name">educational.contract.view.tree</field>
+        <field name="model">educational.contract</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="student_id" />
+                <field name="payment_status" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="educational_contract_search" model="ir.ui.view">
+        <field name="name">educational.contract.search</field>
+        <field name="model">educational.contract</field>
+        <field name="arch" type="xml">
+            <search>
+                <group expand="0" string="Agrupar por">
+                    <filter string="Estudiante" name="group_by_student_id" context="{'group_by': 'student_id'}"/>
+                </group>
+                
+                <field name="name" string="Nombre" filter_domain="[('name', 'ilike', self)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Window Action -->
+    <record id="educational_contract_action" model="ir.actions.act_window">
+        <field name="name">Contrato de Matriculación</field>
+        <field name="res_model">educational.contract</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem
+        id="educational_contract_menu"
+        name="Contratos de Matriculación"
+        sequence="10"/>
+
+    <menuitem
+        id="educational_contract_submenu"
+        name="Contratos"
+        parent="educational_contract_menu"
+        action="educational_contract_action"
+        sequence="10"/>
+
+</odoo>

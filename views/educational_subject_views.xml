@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Tree View -->
+        <record id="view_educational_subject_tree" model="ir.ui.view">
+            <field name="name">educational.subject.tree</field>
+            <field name="model">educational.subject</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="active"/>
+                    <field name="product_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Form View -->
+        <record id="view_educational_subject_form" model="ir.ui.view">
+            <field name="name">educational.subject.form</field>
+            <field name="model">educational.subject</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group string="Información General">
+                                <field name="name"/>
+                                <field name="code"/>
+                                <field name="active"/>
+                            </group>
+                            <group string="Producto Asociado">
+                                <field name="product_id" 
+                                       context="{'default_type': 'service'}"
+                                       options="{'no_create': True, 'no_edit': True}"/>
+                            </group>
+                        </group>
+                        
+                        <group>
+                            <group string="Descripción">
+                                <field name="description" nolabel="1" placeholder="Descripción detallada de la materia..."/>
+                            </group>
+                        </group>
+                    </sheet>
+                    
+                    <!-- <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div> -->
+                </form>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_educational_subject_search" model="ir.ui.view">
+            <field name="name">educational.subject.search</field>
+            <field name="model">educational.subject</field>
+            <field name="arch" type="xml">
+                <search>
+                    <filter string="Activas" name="active" domain="[('active', '=', True)]"/>
+                    <filter string="Inactivas" name="inactive" domain="[('active', '=', False)]"/>
+                    <separator/>
+                    
+                    <group expand="0" string="Agrupar por">
+                        <filter string="Producto" name="group_by_product" context="{'group_by': 'product_id'}"/>
+                    </group>
+                    
+                    <field name="name" string="Nombre" filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"/>
+                    <field name="code" string="Código"/>
+                    <field name="product_id" string="Producto"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Window Action -->
+        <record id="action_educational_subject" model="ir.actions.act_window">
+            <field name="name">Materias Educativas</field>
+            <field name="res_model">educational.subject</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_educational_subject_tree"/>
+            <field name="search_view_id" ref="view_educational_subject_search"/>
+            <field name="context">{'default_active': True}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Crear tu primera materia educativa
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu Items -->
+        <menuitem id="menu_educational_subject" name="Materias" 
+                  parent="educational_contract_menu" 
+                  action="action_educational_subject" sequence="20"/>
+    </data>
+</odoo>
