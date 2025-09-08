@@ -12,6 +12,13 @@ class ResPartner(models.Model):
         inverse_name='student_id',
         string='Contratos de Matriculación'
     )
+    student_subject_ids = fields.Many2many(
+        comodel_name='educational.subject',
+        relation='student_subject_rel',
+        column1='student_id',
+        column2='subject_id',
+        string='Materias Inscritas'
+    )
     professor_subject_ids = fields.Many2many(
         comodel_name='educational.subject',
         relation='professor_subject_rel',

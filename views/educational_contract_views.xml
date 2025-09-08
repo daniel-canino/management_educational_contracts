@@ -17,11 +17,17 @@
                         <page name="subjects" string="Materias">
                             <field name="contract_line_ids">
                                 <tree editable="bottom">
+                                    <field name="student_subject_ids" invisible="1" />
+                                    <field name="professor_subject_ids" invisible="1" />
                                     <field name="subject_id" />
                                     <field name="professor_id" />
                                     <field name="cost" />
                                 </tree>
                             </field>
+                            <group class="oe_subtotal_footer oe_right">
+                                <label string="Costo Total:" for="total_amount" />
+                                <field name="total_amount" widget="monetary" readonly="1" nolabel="1"/>
+                            </group>
                         </page>
                     </notebook>
                 </sheet>

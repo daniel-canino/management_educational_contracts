@@ -16,3 +16,19 @@ class EducationalSubject(models.Model):
         domain="[('type', '=', 'service')]", 
         required=True
     )
+    professor_subject_ids = fields.Many2many(
+        comodel_name='res.partner',
+        relation='professor_subject_rel',
+        column1='subject_id',
+        column2='professor_id',
+        string='Profesores que imparten',
+        domain="[('is_professor', '=', True)]"
+    )
+    student_subject_ids = fields.Many2many(
+        comodel_name='res.partner',
+        relation='student_subject_rel',
+        column1='subject_id',
+        column2='student_id',
+        string='Estudiantes inscritos',
+        domain="[('is_student', '=', True)]"
+    )
