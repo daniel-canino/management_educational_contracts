@@ -55,22 +55,29 @@
     </record>
 
     <menuitem
-        id="educational_contacts_menu"
+        id="educational_contacts_root_menu"
         name="Contactos"
         parent="educational_contract_menu"
         sequence="40"/>
 
     <menuitem
+        id="educational_contacts_menu"
+        name="Todos los contactos"
+        action="contacts.action_contacts"
+        parent="educational_contacts_root_menu"
+        sequence="10"/>
+
+    <menuitem
         id="educational_students_menu"
         name="Estudiantes"
         action="action_educational_students"
-        parent="educational_contacts_menu"
-        sequence="10"/>
+        parent="educational_contacts_root_menu"
+        sequence="20"/>
 
     <menuitem
         id="educational_professors_menu"
         name="Profesores"
         action="action_educational_professors"
-        parent="educational_contacts_menu"
-        sequence="20"/>
+        parent="educational_contacts_root_menu"
+        sequence="30"/>
 </odoo>

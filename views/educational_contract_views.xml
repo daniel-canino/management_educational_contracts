@@ -25,7 +25,14 @@
                         <field name="student_id" />
                         <field name="invoice_ids" invisible="1" />
                         <field name="has_invoice" invisible="1"  />
-                        <field name="payment_status" attrs="{'invisible': [('has_invoice', '=', False)]}" />
+                        <field name="payment_status" 
+                            decoration-success="payment_status == 'paid'"
+                            decoration-info="payment_status == 'in_payment'"
+                            decoration-warning="payment_status == 'not_paid'"
+                            decoration-primary="payment_status == 'partial'"
+                            decoration-muted="payment_status == 'nothing'"
+                            decoration-danger="payment_status == 'reversed'"
+                            widget="badge" attrs="{'invisible': [('has_invoice', '=', False)]}" />
                     </group>
                     <notebook>
                         <page name="subjects" string="Materias">
@@ -57,7 +64,13 @@
             <tree>
                 <field name="name" />
                 <field name="student_id" />
-                <field name="payment_status" />
+                <field name="payment_status" decoration-success="payment_status == 'paid'"
+                    decoration-info="payment_status == 'in_payment'"
+                    decoration-warning="payment_status == 'not_paid'"
+                    decoration-primary="payment_status == 'partial'"
+                    decoration-muted="payment_status == 'nothing'"
+                    decoration-danger="payment_status == 'reversed'"
+                    widget="badge" />
             </tree>
         </field>
     </record>
