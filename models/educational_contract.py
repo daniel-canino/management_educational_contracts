@@ -88,6 +88,12 @@ class EducationalContract(models.Model):
         
         invoice_line_vals = []
         for line in self.contract_line_ids:
+            if line.cost <= 0:
+                raise models.ValidationError(f"El costo de la materia '{line.subject_id.name}' debe ser mayor que cero.")
+            
+            if not line.subject_id.product_id:
+                raise models.ValidationError(f"La materia '{line.subject_id.name}' no tiene un producto asociado.")
+            
             invoice_line_vals.append((0, 0, {
                 'name': f"{line.subject_id.name} - Profesor: {line.professor_id.name}",
                 'quantity': 1,

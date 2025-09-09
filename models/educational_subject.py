@@ -42,3 +42,11 @@ class EducationalSubject(models.Model):
                 'default_code': self.code,
             })
             self.product_id = product
+
+
+    @api.constrains('code')
+    def _check_unique_code(self):
+        for record in self:
+            if self.search_count([('code', '=', record.code), ('id', '!=', record.id)]) > 0:
+                raise models.ValidationError(f"El código '{record.code}' ya está en uso. Debe ser único.")
+                
