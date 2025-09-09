@@ -22,12 +22,17 @@ permitiendo al personal de control de estudios:
         'contacts',
     ],
     'data': [
+        # Data
+        'data/ir_sequence.xml',
         # Seguridad
         'security/ir.model.access.csv',
         # Vistas
         'views/educational_contract_views.xml',
         'views/educational_subject_views.xml',
         'views/dashboard_views.xml',
+        'views/res_partner_views.xml',
+        'views/account_move_views.xml',
+        'views/product_views.xml',
     ],
     'installable': True,
     'application': True,
@@ -35,7 +40,6 @@ permitiendo al personal de control de estudios:
     'assets': {
         'web.assets_backend': [
             'management_educational_contracts/static/src/dashboard.js',
-            # "https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.1/powerbi.min.js"
             "https://cdn.jsdelivr.net/npm/powerbi-client@2.21.1/dist/powerbi.min.js",
         ],
     },

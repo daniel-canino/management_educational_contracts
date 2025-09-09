@@ -1,5 +1,5 @@
 from odoo import models, fields, api
-
+from datetime import date, timedelta
 
 
 class EducationalContract(models.Model):
@@ -7,7 +7,7 @@ class EducationalContract(models.Model):
     _description = 'Contrato de Matriculación'
 
 
-    name = fields.Char(string='Número de Contrato', required=True, copy=False, readonly=True)
+    name = fields.Char(string='Número de Contrato', copy=False, readonly=True)
     student_id = fields.Many2one(
         comodel_name='res.partner', 
         string='Estudiante', 
@@ -18,7 +18,6 @@ class EducationalContract(models.Model):
         comodel_name='educational.contract.line',
         inverse_name='contract_id',
         string='Líneas del Contrato',
-        required=True,
     )
     total_amount = fields.Float(string='Monto Total', compute='_compute_total_amount', store=True)
     invoice_ids = fields.One2many(
@@ -27,24 +26,102 @@ class EducationalContract(models.Model):
         string='Factura Asociada', 
         readonly=True
     )
+    has_invoice = fields.Boolean(compute="_compute_has_invoice", store=True)
     payment_status = fields.Selection(
         selection=[
-            ('unpaid', 'No Pagado'),
-            ('partial', 'Parcialmente Pagado'),
-            ('paid', 'Pagado')
+            ('nothing', 'Nada que pagar'),
+            ('not_paid', 'No pagado'),
+            ('in_payment', 'En proceso'),
+            ('paid', 'Pagado'),
+            ('partial', 'Parcialmente pagado'),
+            ('reversed', 'Revertido'),
         ],
         string='Estado de Pago',
         compute='_compute_payment_status',
         store=True
     )
 
+    # ORM METHODS #
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            vals['name'] = self.env['ir.sequence'].next_by_code('educational.contract') or "Nuevo"
 
+        return super().create(vals_list)
+    
+    # COMPUTE METHODS #
     @api.depends('contract_line_ids.cost')
     def _compute_total_amount(self):
         for contract in self:
             contract.total_amount = sum(line.cost for line in contract.contract_line_ids)
 
+    @api.depends('invoice_ids')
+    def _compute_has_invoice(self):
+        for contract in self:
+            contract.has_invoice = bool(contract.invoice_ids)
 
+            
+    @api.depends('invoice_ids.payment_state')
+    def _compute_payment_status(self):
+        payment_map = {
+            'not_paid': 'not_paid',
+            'in_payment': 'in_payment',
+            'paid': 'paid',
+            'partial': 'partial',
+            'reversed': 'reversed'
+        }
+        for contract in self:
+            if not contract.invoice_ids:
+                contract.payment_status = 'nothing'
+            else:
+                invoice = contract.invoice_ids[0]
+                contract.payment_status = payment_map.get(invoice.payment_state, 'not_paid')
+
+    # ACTION METHODS #
+    def action_create_invoice(self):
+        self.ensure_one()
+        if self.invoice_ids:
+            raise models.ValidationError("Ya existe una factura asociada a este contrato.")
+
+        if not self.contract_line_ids:
+            raise models.ValidationError("El contrato debe tener al menos una línea.")
+        
+        invoice_line_vals = []
+        for line in self.contract_line_ids:
+            invoice_line_vals.append((0, 0, {
+                'name': f"{line.subject_id.name} - Profesor: {line.professor_id.name}",
+                'quantity': 1,
+                'price_unit': line.cost,
+                'product_id': line.subject_id.product_id.id,
+            }))
+
+        invoice_date = date.today()
+        vals = {
+            'move_type': 'out_invoice',
+            'partner_id': self.student_id.id,
+            'educational_contract_id': self.id,
+            'invoice_line_ids': invoice_line_vals,
+            'invoice_date': invoice_date,
+            'invoice_origin': self.name
+        }
+        self.env['account.move'].create(vals)
+    
+
+    def action_open_invoice(self):
+        self.ensure_one()
+        if not self.invoice_ids:
+            raise models.ValidationError("No hay factura asociada a este contrato.")
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Factura',
+            'res_model': 'account.move',
+            'view_mode': 'form',
+            'res_id': self.invoice_ids[0].id,
+            'target': 'current',
+        }
+    
+    
 class EducationalContractLine(models.Model):
     _name = 'educational.contract.line'
     _description = 'Línea del Contrato de Matriculación'

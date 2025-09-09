@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form_inherit" model="ir.ui.view">
+        <field name="name">res.partner.view.form.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <field position="after" name="category_id">
+                <field name="is_student" />
+                <field name="is_professor" />
+            </field>
+            <xpath expr="//notebook" position="inside">
+                <page name="subjects" string="Materias inscritas" attrs="{'invisible': [('is_student', '=', False)]}">    
+                    <field name="student_subject_ids">
+                        <tree editable="bottom" > 
+                            <field name="name"/>
+                            <field name="description"/>
+                        </tree>
+                    </field>
+                </page>
+                <page name="educational_contracts" string="Contratos de Matriculación" attrs="{'invisible': [('is_student', '=', False)]}">
+                    <field name="student_contract_ids">
+                        <tree create="false" edit="false" delete="false">
+                            <field name="name"/>
+                            <field name="total_amount"/>
+                            <field name="payment_status"/>
+                        </tree>
+                    </field>
+                </page>
+                <page name="professor_subject" string="Materias que imparte" attrs="{'invisible': [('is_professor', '=', False)]}">
+                    <field name="professor_subject_ids">
+                        <tree editable="bottom" > 
+                            <field name="name"/>
+                            <field name="description"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_educational_students" model="ir.actions.act_window">
+        <field name="name">Estudiantes</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('is_student', '=', True)]</field>
+    </record>
+
+    <record id="action_educational_professors" model="ir.actions.act_window">
+        <field name="name">Profesores</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('is_professor', '=', True)]</field>
+    </record>
+
+    <menuitem
+        id="educational_contacts_menu"
+        name="Contactos"
+        parent="educational_contract_menu"
+        sequence="40"/>
+
+    <menuitem
+        id="educational_students_menu"
+        name="Estudiantes"
+        action="action_educational_students"
+        parent="educational_contacts_menu"
+        sequence="10"/>
+
+    <menuitem
+        id="educational_professors_menu"
+        name="Profesores"
+        action="action_educational_professors"
+        parent="educational_contacts_menu"
+        sequence="20"/>
+</odoo>

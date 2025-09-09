@@ -20,6 +20,7 @@
     <menuitem id="menu_educational_dashboard"
               name="Dashboard de Contratos"
               parent="educational_contract_menu"
-              action="action_educational_dashboard"/>
+              action="action_educational_dashboard"
+              sequence="50"/>
 
 </odoo>

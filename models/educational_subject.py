@@ -12,9 +12,8 @@ class EducationalSubject(models.Model):
     active = fields.Boolean(string='Activo', default=True)
     product_id = fields.Many2one(
         comodel_name='product.product', 
-        string='Producto Asociado',
+        string='Servicio Asociado',
         domain="[('type', '=', 'service')]", 
-        required=True
     )
     professor_subject_ids = fields.Many2many(
         comodel_name='res.partner',
@@ -32,3 +31,14 @@ class EducationalSubject(models.Model):
         string='Estudiantes inscritos',
         domain="[('is_student', '=', True)]"
     )
+
+    # ACTION METHODS #
+    def action_create_product(self):
+        self.ensure_one()
+        if not self.product_id:
+            product = self.env['product.product'].create({
+                'name': self.name,
+                'detailed_type': 'service',
+                'default_code': self.code,
+            })
+            self.product_id = product
